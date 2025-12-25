@@ -52,7 +52,7 @@ public class ApiV1PostController {
     }
 
 
-    record PostWriteForm(
+    record PostWriteReqBody(
             @NotBlank
             @Size(min = 2, max = 100)
             String title,
@@ -64,13 +64,17 @@ public class ApiV1PostController {
 
     @PostMapping
     @Transactional
-    public RsData<PostDto> write(@Valid @RequestBody PostWriteForm form) {
+    public RsData<List> write(@Valid @RequestBody PostWriteReqBody form) {
         Post post = postService.write(form.title, form.content);
+
+        long totalCount = postService.count();
+
+        List<Object> data = List.of(totalCount, new PostDto(post));
 
         return new RsData<>(
                 "200-1",
                 "%d번 글이 생성되었습니다.".formatted(post.getId()),
-                new PostDto(post)
+                data
         );
     }
 }

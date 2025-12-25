@@ -73,17 +73,13 @@ public class ApiV1PostController {
     public RsData<PostWriteResBody> write(@Valid @RequestBody PostWriteReqBody form) {
         Post post = postService.write(form.title, form.content);
 
-        long totalCount = postService.count();
-
-        PostWriteResBody data = new PostWriteResBody(
-                totalCount,
-                new PostDto(post)
-        );
-
         return new RsData<>(
                 "200-1",
                 "%d번 글이 생성되었습니다.".formatted(post.getId()),
-                data
+                new PostWriteResBody(
+                        postService.count(),
+                        new PostDto(post)
+                )
         );
     }
 }
